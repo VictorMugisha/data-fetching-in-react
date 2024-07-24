@@ -5,14 +5,22 @@ function App() {
   const BASE_URL = "https://jsonplaceholder.typicode.com"
   const [posts, setPosts] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true)
-      const response = await fetch(`${BASE_URL}/posts`)
-      const data = await response.json()
-      setPosts(data)
-      setIsLoading(false)
+
+      try {
+        const response = await fetch(`${BASE_URL}/posts`)
+        const data = await response.json()
+        setPosts(data)
+      } catch (e) {
+        setError(e)
+      } finally {
+        setIsLoading(false)
+      }
+
     }
 
     getData()
@@ -21,7 +29,8 @@ function App() {
   return (
     <main>
       <h2>Data Fetching in React</h2>
-      {isLoading ? <div>Loading...</div> :
+      {isLoading ? <div>Loading...</div> : 
+      error ? <div>Something went wrong</div> :
         <ul>
           {posts.map(post => (
             <li key={post.id}>{post.title}</li>
